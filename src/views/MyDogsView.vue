@@ -35,7 +35,8 @@ onMounted(async () => {
     <button @click="increment">Increment</button>
   </div> -->
   <div class="about">
-    <div v-if="dogs.length === 0">Loading...</div>
+    <div v-if="state.dogs.length === 0 && !state.isLoading">No dogs...</div>
+    <div v-if="state.isLoading">Loading...</div>
     <ul v-else class="dog-list">
       <li v-for="dog in dogs" :key="dog.id" class="dog-item">
         <RouterLink :to="{ name: 'onedog', params: { id: dog.id }, query: { dog: 'my' } }">

@@ -2,10 +2,11 @@
 import { ref, onMounted, watchEffect } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useAllDogsStore } from '@/stores/dogs'
+
 const { state, getOneDogToStore, getOneMyDogToStore } = useAllDogsStore()
-const dog = ref(null)
 const route = useRoute()
 const my = route.query.dog
+
 onMounted(async () => {
   const { id } = route.params
   const myDog = route.query.dog
@@ -13,29 +14,26 @@ onMounted(async () => {
     if (myDog === 'my') {
       await getOneMyDogToStore(id)
     } else {
-      const data = await getOneDogToStore(id)
+      await getOneDogToStore(id)
     }
   }
-})
-
-watchEffect(() => {
-  dog.value = state.oneDog
 })
 </script>
 
 <template>
   <main class="onedog-page">
-    <div class="onedog">
+    <div v-if="state.oneDog" class="onedog">
       <div class="thumb-onedog">
-        <img :src="dog?.image" :alt="dog?.name" />
+        <img :src="state.oneDog.image" :alt="state.oneDog.name" />
       </div>
 
       <div class="info-block">
-        <p>Name: {{ dog?.name }}</p>
-        <p>Breed: {{ dog?.breed }}</p>
+        <p>Name: {{ state.oneDog.name }}</p>
+        <p>Breed: {{ state.oneDog.breed }}</p>
         <RouterLink :to="my === 'my' ? '/mydogs' : '/'" class="back-button">Back</RouterLink>
       </div>
     </div>
+    <h1 v-else="state.isLoading">Loading...</h1>
   </main>
 </template>
 
