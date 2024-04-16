@@ -14,14 +14,12 @@ export const clearToken = () => {
 
 export async function signUp(body) {
   const { data } = await auth.post('/user', body)
-  console.log(data)
   return data
 }
 
 export async function signIn(body) {
   const { data } = await auth.post('/auth/login', body)
   setToken(data.token)
-  console.log(data)
   return data
 }
 
@@ -38,4 +36,40 @@ export async function getProfile(token) {
   })
 
   return data
+}
+
+export async function getAllDogs({ pages = 1, itemsPerPage = 10 }) {
+  try {
+    const { data } = await auth.get(`/alldogs/pagination?page=${pages}&limit=${itemsPerPage}`)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+export async function getDogs() {
+  try {
+    const { data } = await auth.get(`/dogs`)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export async function getOneDog(id) {
+  try {
+    const { data } = await auth.get(`/alldogs/${id}`)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export async function getOneMyDog(id) {
+  try {
+    const { data } = await auth.get(`/dogs/dog/${id}`)
+    console.log(data)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
 }
