@@ -3,7 +3,7 @@ import { useAllDogsStore } from '@/stores/dogs'
 import { ref, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import defaultPhoto from '../assets/images/pravilnyj-lazy-load.jpg'
-console.log(defaultPhoto)
+
 const { state, getAllDogsHomePage, getAllMyDogs, addToFavorites, deleteFromMyFavorites } =
   useAllDogsStore()
 const dogs = ref([])
@@ -49,9 +49,10 @@ const addDogToFavorites = async (dog) => {
 
 <template>
   <main class="home-page">
+    <div v-if="state.isLoading">Loading...</div>
     <div v-if="state.dogs.length === 0 && !state.isLoading">No dogs...</div>
-    <!-- <div v-if="state.isLoading">Loading...</div> -->
-    <ul v-else class="dog-list">
+
+    <ul class="dog-list">
       <li v-for="dog in dogs" :key="dog.id" class="dog-item">
         <RouterLink :to="'/onedog/' + dog.id">
           <img :src="state.isLoading ? defaultPhoto : dog.image" :alt="dog.name" />

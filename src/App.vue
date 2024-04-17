@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { ref, onMounted, watchEffect, onUnmounted } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { useAuthStore } from './stores/auth'
 import { setToken } from './stores/api/axios'
 import BurgerSVG from './assets/images/burger.svg?url'
@@ -16,12 +16,19 @@ const toggleNav = () => {
   }
   showMobile.value = !showMobile.value
 }
+
+watch(isDesktop, (newValue, oldValue) => {
+  if (newValue && !oldValue) {
+    showMobile.value = false
+  }
+})
 onMounted(async () => {
   await store.hydrateFromLocalStorage()
   const data = await store.getToken(store.userToken)
 
   await setToken(data.token)
   isDesktop.value = window.innerWidth >= 1024
+
   window.addEventListener('resize', () => {
     isDesktop.value = window.innerWidth >= 1024
   })
@@ -79,17 +86,17 @@ const uploadAvatar = () => {
     <transition name="fade">
       <div v-if="showMobile" class="mobile-menu">
         <nav class="mobile-nav">
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/mydogs">My Dogs</RouterLink>
-          <RouterLink v-if="!store.userToken" to="/login">Login</RouterLink>
-          <RouterLink v-if="!store.userToken" to="/register">Register</RouterLink>
+          <RouterLink class="link" @click="toggleNav" to="/">Home</RouterLink>
+          <RouterLink class="link" @click="toggleNav" to="/mydogs">My Dogs</RouterLink>
+          <RouterLink v-if="!store.userToken" class="link" to="/login">Login</RouterLink>
+          <RouterLink v-if="!store.userToken" class="link" to="/register">Register</RouterLink>
         </nav>
         <div v-if="store.userToken" class="mobile-user-div">
           <p>{{ store.userAuth.email }}</p>
-          <div class="thumb">
+          <div class="mobile-thumb">
             <img :src="store.userAuth.avatar" alt="avatar" />
           </div>
-          <button @click="signOutUser">Logout</button>
+          <button @click="signOutUser" class="logout-btn">Logout</button>
         </div>
         <button type="button" @click="toggleNav" class="close-btn">
           <img :src="CloseSVG" alt="My image" class="close-svg" />
@@ -102,6 +109,9 @@ const uploadAvatar = () => {
 </template>
 
 <style scoped>
+.link {
+  font-size: 28px;
+}
 .burger-btn {
   align-self: flex-end;
 }
@@ -126,12 +136,37 @@ const uploadAvatar = () => {
 }
 .mobile-menu {
   position: fixed;
+  padding: 40px;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: aqua;
+  background-color: grey;
   z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.mobile-nav > a {
+  padding: 0;
+  border-left: none;
+}
+
+.mobile-user-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.logout-btn {
+  width: 80px;
 }
 .burger-svg {
   width: 20px;
@@ -178,6 +213,13 @@ nav a:first-of-type {
 .thumb {
   width: 40px;
   height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.mobile-thumb {
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   overflow: hidden;
 }

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useCounterStore } from '../stores/counter.js'
 import { useAuthStore } from '@/stores/auth'
 import { useAllDogsStore } from '@/stores/dogs'
+import defaultPhoto from '../assets/images/pravilnyj-lazy-load.jpg'
 
 const counter = useCounterStore()
 const auth = useAuthStore()
@@ -32,12 +33,13 @@ const deleteDog = async (id) => {
 
 <template>
   <div class="about">
-    <div v-if="state.myDogs.length === 0 && !state.isLoading">No dogs...</div>
     <div v-if="state.isLoading">Loading...</div>
+    <div v-if="state.myDogs.length === 0 && !state.isLoading">No dogs...</div>
+
     <ul v-else class="dog-list">
       <li v-for="dog in dogs" :key="dog.id" class="dog-item">
         <RouterLink :to="{ name: 'onedog', params: { id: dog.id }, query: { dog: 'my' } }">
-          <img :src="dog.image" :alt="dog.name" />
+          <img :src="state.isLoading ? defaultPhoto : dog.image" :alt="dog.name" />
           <p>Name: {{ dog.name }}</p>
           <p>Breed: {{ dog.breed }}</p>
         </RouterLink>
