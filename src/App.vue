@@ -69,7 +69,7 @@ const uploadAvatar = () => {
     <div v-if="store.userToken && isDesktop" class="user-div">
       <p>{{ store.userAuth.email }}</p>
       <div class="thumb" @click="uploadAvatar">
-        <img :src="store.userAvatar" alt="avatar" />
+        <img :src="store.userAvatar || store.userAuth.avatar" alt="avatar" />
       </div>
       <button @click="signOutUser">Logout</button>
     </div>
