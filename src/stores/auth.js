@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('authStore', {
   actions: {
     async getToken(token) {
       this.user = await getProfile(token)
-      // this.avatar = this.user.avatar
+      this.avatar = this.user.avatar
       this.token = this.user.token
       setToken(this.user.token)
       this.persistToLocalStorage()
