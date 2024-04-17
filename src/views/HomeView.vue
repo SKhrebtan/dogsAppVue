@@ -49,13 +49,14 @@ const addDogToFavorites = async (dog) => {
 
 <template>
   <main class="home-page">
-    <div v-if="state.isLoading">Loading...</div>
+    <div v-if="state.isLoading && state.dogs.length === 0">Loading...</div>
     <div v-if="state.dogs.length === 0 && !state.isLoading">No dogs...</div>
 
     <ul class="dog-list">
       <li v-for="dog in dogs" :key="dog.id" class="dog-item">
         <RouterLink :to="'/onedog/' + dog.id">
-          <img :src="state.isLoading ? defaultPhoto : dog.image" :alt="dog.name" />
+          <img :src="dog.image" :alt="dog.name" v-if="dog.image && !state.isLoading" />
+          <img :src="defaultPhoto" :alt="dog.name" v-else />
           <p>Name: {{ dog.name }}</p>
           <p>Breed: {{ dog.breed }}</p>
         </RouterLink>
@@ -124,7 +125,7 @@ const addDogToFavorites = async (dog) => {
 }
 @media (min-width: 1024px) {
   .dog-list {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

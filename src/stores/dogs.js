@@ -21,7 +21,7 @@ export const useAllDogsStore = defineStore('alldogs', () => {
     state.value.dogs = []
     state.value.isLoading = true
     try {
-      const data = await getAllDogs({ pages: page, itemsPerPage: 10 })
+      const data = await getAllDogs({ pages: page, itemsPerPage: 12 })
       state.value.dogs = data.dogs
       state.value.totalPages = data.totalPages
     } catch (error) {
@@ -71,7 +71,6 @@ export const useAllDogsStore = defineStore('alldogs', () => {
   }
 
   const addToFavorites = async (dog) => {
-    state.value.isLoading = true
     try {
       const data = await addToMyDogs(dog)
       let dogs
@@ -81,8 +80,6 @@ export const useAllDogsStore = defineStore('alldogs', () => {
       state.value.myDogs = dogs
     } catch (error) {
       console.log(error.message)
-    } finally {
-      state.value.isLoading = false
     }
   }
 
