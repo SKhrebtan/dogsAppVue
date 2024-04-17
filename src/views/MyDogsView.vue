@@ -7,14 +7,12 @@ import { useAllDogsStore } from '@/stores/dogs'
 
 const counter = useCounterStore()
 const auth = useAuthStore()
-const { state, getAllMyDogs } = useAllDogsStore()
-const { count, doubleCount, increment } = toRefs(counter)
+const { state, getAllMyDogs, deleteFromMyFavorites } = useAllDogsStore()
 const router = useRouter()
 const dogs = ref([])
 watch(
   () => auth.user,
   (newValue, oldValue) => {
-    console.log(newValue)
     if (!newValue?.token) {
       router.push({ name: 'login' })
     }
@@ -23,19 +21,18 @@ watch(
 
 onMounted(async () => {
   await getAllMyDogs()
-  dogs.value = state.dogs
+  dogs.value = state.myDogs
 })
+
+const deleteDog = async (id) => {
+  await deleteFromMyFavorites(id)
+  dogs.value = state.myDogs
+}
 </script>
 
 <template>
-  <!-- <div class="about">
-    <h1>This is an about page</h1>
-    <p>Count: {{ count }}</p>
-    <p>Double Count: {{ doubleCount }}</p>
-    <button @click="increment">Increment</button>
-  </div> -->
   <div class="about">
-    <div v-if="state.dogs.length === 0 && !state.isLoading">No dogs...</div>
+    <div v-if="state.myDogs.length === 0 && !state.isLoading">No dogs...</div>
     <div v-if="state.isLoading">Loading...</div>
     <ul v-else class="dog-list">
       <li v-for="dog in dogs" :key="dog.id" class="dog-item">
@@ -44,6 +41,7 @@ onMounted(async () => {
           <p>Name: {{ dog.name }}</p>
           <p>Breed: {{ dog.breed }}</p>
         </RouterLink>
+        <button type="button" class="delete-btn" @click="deleteDog(dog.id)">Delete</button>
       </li>
     </ul>
   </div>
@@ -55,19 +53,40 @@ onMounted(async () => {
 }
 .dog-list {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* П'ять стовпців з однаковою шириною */
-  grid-gap: 10px; /* Проміжок між елементами */
+  grid-template-columns: repeat(1, 1fr);
+  padding: 0;
   list-style: none;
   padding: 0;
 }
 
 .dog-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   border: 1px solid #c2c2c2;
-  padding: 10px;
+  padding: 0;
+}
+.delete-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: red;
+}
+
+.delete-btn:hover {
+  background-color: #c82333; /* Зміна фону при наведенні */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Додавання тіні при наведенні */
+}
+@media (min-width: 768px) {
+  .dog-list {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+  }
 }
 @media (min-width: 1024px) {
+  .dog-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 </style>

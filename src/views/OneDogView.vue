@@ -30,6 +30,7 @@ onMounted(async () => {
       <div class="info-block">
         <p>Name: {{ state.oneDog.name }}</p>
         <p>Breed: {{ state.oneDog.breed }}</p>
+
         <RouterLink :to="my === 'my' ? '/mydogs' : '/'" class="back-button">Back</RouterLink>
       </div>
     </div>

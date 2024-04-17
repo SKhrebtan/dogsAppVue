@@ -73,3 +73,31 @@ export async function getOneMyDog(id) {
     console.log(error.message)
   }
 }
+
+export async function addToMyDogs(dog) {
+  try {
+    const { data } = await auth.post(`/dogs`, dog)
+
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export async function deleteFromMyDogs(id) {
+  try {
+    const { data } = await auth.delete(`dogs/dog/${id}`)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export async function updateAvatar(file) {
+  try {
+    const { data } = await auth.patch('/auth/avatar', file)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}

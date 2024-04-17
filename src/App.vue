@@ -7,9 +7,13 @@ import BurgerSVG from './assets/images/burger.svg?url'
 import CloseSVG from './assets/images/close.svg?url'
 const isDesktop = ref(true)
 const showMobile = ref(false)
-console.log(isDesktop)
 const store = useAuthStore()
 const toggleNav = () => {
+  if (!showMobile.value) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = 'auto'
+  }
   showMobile.value = !showMobile.value
 }
 onMounted(async () => {
@@ -34,6 +38,24 @@ onUnmounted(() => {
     isDesktop.value = window.innerWidth >= 1024
   })
 })
+
+const uploadAvatar = () => {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.addEventListener('change', async (event) => {
+    const file = event.target.files[0]
+    console.log(file)
+    const formData = new FormData()
+    formData.append('file', file)
+    try {
+      await store.updateUserAvatar(formData)
+    } catch (error) {
+      console.error('Помилка при оновленні аватара:', error.message)
+    }
+  })
+  input.click()
+}
 </script>
 
 <template>
@@ -46,12 +68,12 @@ onUnmounted(() => {
     </nav>
     <div v-if="store.userToken && isDesktop" class="user-div">
       <p>{{ store.userAuth.email }}</p>
-      <div class="thumb">
-        <img :src="store.userAuth.avatar" alt="avatar" />
+      <div class="thumb" @click="uploadAvatar">
+        <img :src="store.userAvatar" alt="avatar" />
       </div>
       <button @click="signOutUser">Logout</button>
     </div>
-    <button v-else type="button" @click="toggleNav" class="burger-btn">
+    <button v-if="!isDesktop" type="button" @click="toggleNav" class="burger-btn">
       <img :src="BurgerSVG" alt="My image" class="burger-svg" />
     </button>
     <transition name="fade">
@@ -109,6 +131,7 @@ onUnmounted(() => {
   width: 100vw;
   height: 100vh;
   background-color: aqua;
+  z-index: 999;
 }
 .burger-svg {
   width: 20px;
