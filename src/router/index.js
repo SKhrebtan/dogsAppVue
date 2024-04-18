@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import OneDogView from '../views/OneDogView.vue'
+import DashboardView from '../views/DashboardView.vue'
 import { useAuthStore } from '@/stores/auth'
 import { ref, watch } from 'vue'
 
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView
     }
   ]
 })
@@ -45,13 +51,26 @@ router.beforeEach((to, from, next) => {
       user.value = newValue
     }
   )
+  watch(
+    () => store.userAuth,
+    (newValue, oldValue) => {
+      userInfo.value = newValue
+    }
+  )
   const user = ref(store.userToken)
+  const userInfo = ref(store.userAuth)
   const isAuthenticated = !!user.value
-  console.log(isAuthenticated)
+
   if (to.name === 'mydogs' && !isAuthenticated) {
     next({ name: 'login' })
   } else if ((to.name === 'login' || to.name === 'register') && isAuthenticated) {
-    next({ name: 'home' })
+    if (userInfo.value.role === 'admin') {
+      next({ name: 'dashboard' })
+    } else {
+      next({ name: 'mydogs' })
+    }
+  } else if (to.name === 'dashboard' && isAuthenticated && userInfo.value.role !== 'admin') {
+    next({ name: 'mydogs' })
   } else {
     next()
   }

@@ -67,7 +67,6 @@ export async function getOneDog(id) {
 export async function getOneMyDog(id) {
   try {
     const { data } = await auth.get(`/dogs/dog/${id}`)
-    console.log(data)
     return data
   } catch (error) {
     console.log(error.message)
@@ -93,9 +92,28 @@ export async function deleteFromMyDogs(id) {
   }
 }
 
+export async function deleteFromAllDogs(id) {
+  try {
+    const { data } = await auth.delete(`alldogs/${id}`)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
 export async function updateAvatar(file) {
   try {
     const { data } = await auth.patch('/auth/avatar', file)
+    return data
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export async function addDogToAllList(body) {
+  try {
+    const { data } = await auth.post('/alldogs/new-dog', body)
+    console.log(data)
     return data
   } catch (error) {
     console.log(error.message)

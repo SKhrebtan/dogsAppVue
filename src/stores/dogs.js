@@ -5,9 +5,11 @@ import {
   getDogs,
   getOneMyDog,
   addToMyDogs,
-  deleteFromMyDogs
+  deleteFromMyDogs,
+  addDogToAllList,
+  deleteFromAllDogs
 } from './api/axios'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 export const useAllDogsStore = defineStore('alldogs', () => {
   const state = ref({
     dogs: [],
@@ -84,9 +86,8 @@ export const useAllDogsStore = defineStore('alldogs', () => {
   }
 
   const deleteFromMyFavorites = async (id) => {
-    state.isLoading = true
     try {
-      const data = await deleteFromMyDogs(id)
+      const data = await deleteFromAllDogs(id)
       let dogs
       if (data) {
         dogs = await getDogs()
@@ -94,8 +95,28 @@ export const useAllDogsStore = defineStore('alldogs', () => {
       state.value.myDogs = dogs
     } catch (error) {
       console.log(error.message)
-    } finally {
-      state.value.isLoading = false
+    }
+  }
+
+  const deleteFromAll = async (id, page) => {
+    try {
+      const data = await deleteFromAllDogs(id)
+      if (data) {
+        const updatedDogs = state.value.dogs.filter((dog) => dog.id !== id)
+        state.value.dogs = updatedDogs
+      }
+      return state.value.dogs
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  const addDogFromDashboard = async (body) => {
+    try {
+      const data = await addDogToAllList(body)
+      console.log(data)
+    } catch (error) {
+      console.log(error)
     }
   }
   return {
@@ -105,6 +126,8 @@ export const useAllDogsStore = defineStore('alldogs', () => {
     getAllMyDogs,
     getOneMyDogToStore,
     addToFavorites,
-    deleteFromMyFavorites
+    deleteFromMyFavorites,
+    addDogFromDashboard,
+    deleteFromAll
   }
 })

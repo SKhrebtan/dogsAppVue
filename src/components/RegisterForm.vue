@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Реєстрація</h1>
-    <form @submit.prevent="registerUser">
+    <form @submit.prevent="registerUser" class="register-form">
       <label for="email">Email:</label>
       <input type="email" id="email" v-model="email" required />
       <label for="password">Пароль:</label>
@@ -34,3 +34,13 @@ const registerUser = async () => {
   }
 }
 </script>
+
+<style>
+.register-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+</style>

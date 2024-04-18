@@ -55,7 +55,11 @@ const login = async () => {
     await store.login({ email: email.value, password: password.value })
     user.value = store.userAuth
     if (store.userAuth && store.userAuth.token) {
-      router.push({ name: 'mydogs' })
+      if (store.userAuth.role === 'admin') {
+        router.push({ name: 'dashboard' })
+      } else {
+        router.push({ name: 'mydogs' })
+      }
     }
   } catch (error) {
     error.value = error.message

@@ -1,14 +1,22 @@
 <script setup>
 import { useAllDogsStore } from '@/stores/dogs'
+import { useAuthStore } from '@/stores/auth'
 import { ref, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import defaultPhoto from '../assets/images/pravilnyj-lazy-load.jpg'
-
-const { state, getAllDogsHomePage, getAllMyDogs, addToFavorites, deleteFromMyFavorites } =
-  useAllDogsStore()
-const dogs = ref([])
+import CloseSVG from '../assets/images/close.svg?url'
+const {
+  state,
+  getAllDogsHomePage,
+  getAllMyDogs,
+  addToFavorites,
+  deleteFromMyFavorites,
+  deleteFromAll
+} = useAllDogsStore()
+const authState = useAuthStore()
+const dogs = ref([...state.dogs])
 const totalPages = ref(0)
-const page = ref(1)
+const page = ref(JSON.parse(localStorage.getItem('page_num')) || 1)
 
 onMounted(async () => {
   await getAllMyDogs()
@@ -20,8 +28,23 @@ watch(page, async (newValue, oldValue) => {
   await getAllDogsHomePage(newValue)
   dogs.value = state.dogs
 })
+
+watch(
+  () => state.dogs,
+  (newDogs) => {
+    dogs.value = newDogs
+  }
+)
+watch(
+  () => state.totalPages,
+  (newTotalPages) => {
+    totalPages.value = newTotalPages
+  }
+)
+
 const handlePage = (page_num) => {
   page.value = page_num
+  localStorage.setItem('page_num', JSON.stringify(page_num))
 }
 
 const isDogInMyDogs = (dog) => {
@@ -33,7 +56,6 @@ const isDogInMyDogsId = (dog) => {
 }
 
 const deleteDog = async (id) => {
-  console.log(id)
   await deleteFromMyFavorites(id)
 }
 
@@ -55,11 +77,34 @@ const addDogToFavorites = async (dog) => {
     <ul class="dog-list">
       <li v-for="dog in dogs" :key="dog.id" class="dog-item">
         <RouterLink :to="'/onedog/' + dog.id">
-          <img :src="dog.image" :alt="dog.name" v-if="dog.image && !state.isLoading" />
-          <img :src="defaultPhoto" :alt="dog.name" v-else />
+          <div class="thumb-img">
+            <img
+              :src="dog.image"
+              :alt="dog.name"
+              v-if="dog.image && !state.isLoading"
+              class="dog-image"
+            />
+            <img :src="defaultPhoto" :alt="dog.name" v-else class="dog-image" />
+          </div>
+
           <p>Name: {{ dog.name }}</p>
           <p>Breed: {{ dog.breed }}</p>
         </RouterLink>
+        <button
+          type="button"
+          v-if="authState.userAuth.role === 'admin'"
+          class="delete-btn-from-all"
+          @click="
+            async () => {
+              const data = await deleteFromAll(dog.id, page)
+              if (data.length === 0) {
+                page = page - 1
+              }
+            }
+          "
+        >
+          <img :src="CloseSVG" alt="My image" class="close-svg" />
+        </button>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 471.701 471.701"
@@ -89,6 +134,22 @@ const addDogToFavorites = async (dog) => {
 </template>
 
 <style>
+.delete-btn-from-all {
+  position: absolute;
+  bottom: 10px;
+  right: 50px;
+  width: 30px;
+  height: 30px;
+  background-color: red;
+  border-radius: 50%;
+  transition: all 300ms linear;
+}
+.close-svg {
+  transition: all 300ms linear;
+}
+.delete-btn-from-all:hover > img {
+  transform: rotate(180deg);
+}
 .heart-svg {
   width: 30px;
   height: 30px;
@@ -108,16 +169,29 @@ const addDogToFavorites = async (dog) => {
   list-style: none;
   padding: 0;
 }
-
+.thumb-img {
+  height: 240px;
+  width: 100%;
+}
+.dog-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
 .dog-item {
   position: relative;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   border: 1px solid #c2c2c2;
   padding: 0;
 }
-@media (min-width: 768px) {
+
+.dog-item > a {
+  width: 100%;
+}
+@media (min-width: 480px) {
   .dog-list {
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 10px;

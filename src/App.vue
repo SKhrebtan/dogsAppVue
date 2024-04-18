@@ -25,7 +25,6 @@ watch(isDesktop, (newValue, oldValue) => {
 onMounted(async () => {
   await store.hydrateFromLocalStorage()
   const data = await store.getToken(store.userToken)
-
   await setToken(data.token)
   isDesktop.value = window.innerWidth >= 1024
 
@@ -52,7 +51,6 @@ const uploadAvatar = () => {
   input.accept = 'image/*'
   input.addEventListener('change', async (event) => {
     const file = event.target.files[0]
-    console.log(file)
     const formData = new FormData()
     formData.append('file', file)
     try {
@@ -69,6 +67,7 @@ const uploadAvatar = () => {
   <header :class="{ 'mobile-header': !isDesktop }">
     <nav v-if="isDesktop">
       <RouterLink to="/">Home</RouterLink>
+      <RouterLink v-if="store?.userAuth?.role === 'admin'" to="/dashboard">Dashboard</RouterLink>
       <RouterLink to="/mydogs">My Dogs</RouterLink>
       <RouterLink v-if="!store.userToken" to="/login">Login</RouterLink>
       <RouterLink v-if="!store.userToken" to="/register">Register</RouterLink>
