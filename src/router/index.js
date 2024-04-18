@@ -47,6 +47,7 @@ router.beforeEach((to, from, next) => {
   )
   const user = ref(store.userToken)
   const isAuthenticated = !!user.value
+  console.log(isAuthenticated)
   if (to.name === 'mydogs' && !isAuthenticated) {
     next({ name: 'login' })
   } else if ((to.name === 'login' || to.name === 'register') && isAuthenticated) {
