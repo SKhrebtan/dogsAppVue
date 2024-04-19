@@ -92,7 +92,7 @@ const addDogToFavorites = async (dog) => {
         </RouterLink>
         <button
           type="button"
-          v-if="authState.userAuth.role === 'admin'"
+          v-if="authState?.userAuth?.role === 'admin'"
           class="delete-btn-from-all"
           @click="
             async () => {
@@ -106,6 +106,7 @@ const addDogToFavorites = async (dog) => {
           <img :src="CloseSVG" alt="My image" class="close-svg" />
         </button>
         <svg
+          v-if="authState.userToken"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 471.701 471.701"
           height="40px"
