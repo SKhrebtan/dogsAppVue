@@ -67,7 +67,7 @@ const login = async () => {
 }
 </script>
 
-<style>
+<style scoped>
 .login-form {
   max-width: 400px;
   margin: 0 auto;

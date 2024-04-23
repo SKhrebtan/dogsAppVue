@@ -24,7 +24,7 @@ onMounted(async () => {
   dogs.value = state.dogs
   totalPages.value = state.totalPages
 })
-watch(page, async (newValue, oldValue) => {
+watch(page, async (newValue) => {
   await getAllDogsHomePage(newValue)
   dogs.value = state.dogs
 })
@@ -161,11 +161,11 @@ const addDogToFavorites = async (dog) => {
   transition: all 300ms linear;
 }
 .heart-svg:hover {
-  transform: scale(1.2); /* додаємо тінь при наведенні */
+  transform: scale(1.2); 
 }
 .dog-list {
   display: grid;
-  grid-template-columns: repeat(1, 1fr); /* П'ять стовпців з однаковою шириною */
+  grid-template-columns: repeat(1, 1fr);
   gap: 20px;
   list-style: none;
   padding: 0;

@@ -5,11 +5,10 @@ import {
   getDogs,
   getOneMyDog,
   addToMyDogs,
-  deleteFromMyDogs,
   addDogToAllList,
   deleteFromAllDogs
 } from './api/axios'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 export const useAllDogsStore = defineStore('alldogs', () => {
   const state = ref({
     dogs: [],
@@ -98,7 +97,7 @@ export const useAllDogsStore = defineStore('alldogs', () => {
     }
   }
 
-  const deleteFromAll = async (id, page) => {
+  const deleteFromAll = async (id) => {
     try {
       const data = await deleteFromAllDogs(id)
       if (data) {
