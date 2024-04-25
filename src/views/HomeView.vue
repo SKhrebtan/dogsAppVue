@@ -19,8 +19,11 @@ const totalPages = ref(0)
 const page = ref(JSON.parse(localStorage.getItem('page_num')) || 1)
 
 onMounted(async () => {
-  await getAllMyDogs()
   await getAllDogsHomePage(page.value)
+  const token = await JSON.parse(localStorage.getItem('token'))
+  if (!token) return;
+  await getAllMyDogs()
+  
   dogs.value = state.dogs
   totalPages.value = state.totalPages
 })

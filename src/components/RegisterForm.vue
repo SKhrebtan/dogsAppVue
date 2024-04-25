@@ -24,7 +24,6 @@ const password = ref('')
 const registerUser = async () => {
   try {
     await store.register({ email: email.value, password: password.value })
-    console.log(store.userAuth)
     user.value = store.userAuth
     if (store.userAuth) {
       router.push({ name: 'login' })

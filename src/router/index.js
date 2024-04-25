@@ -61,7 +61,7 @@ router.beforeEach((to, from, next) => {
   const userInfo = ref(store.userAuth)
   const isAuthenticated = !!user.value
 
-  if (to.name === 'mydogs' && !isAuthenticated) {
+  if ((to.name === 'mydogs' && !isAuthenticated) || (to.name === 'dashboard' && !isAuthenticated)) {
     next({ name: 'login' })
   } else if ((to.name === 'login' || to.name === 'register') && isAuthenticated) {
     if (userInfo.value.role === 'admin') {

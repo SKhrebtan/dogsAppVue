@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { watch } from 'vue'
-import { signIn, signUp, signOut, getProfile, updateAvatar } from './api/axios'
+import { signIn, signUp, getProfile, updateAvatar } from './api/axios'
 import { setToken } from './api/axios'
 export const useAuthStore = defineStore('authStore', {
   state: () => ({
@@ -25,6 +24,7 @@ export const useAuthStore = defineStore('authStore', {
     async login(body) {
       this.user = await signIn(body)
       this.token = this.user.token
+      this.avatar = this.user.avatar
       setToken(this.user.token)
       this.persistToLocalStorage()
     },
@@ -38,6 +38,7 @@ export const useAuthStore = defineStore('authStore', {
       this.token = null
       localStorage.removeItem('user')
       localStorage.removeItem('token')
+      localStorage.removeItem('avatar')
     },
     persistToLocalStorage() {
       localStorage.setItem('user', JSON.stringify(this.user))

@@ -2,9 +2,10 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { useAuthStore } from './stores/auth'
-import { setToken } from './stores/api/axios'
 import BurgerSVG from './assets/images/burger.svg?url'
 import CloseSVG from './assets/images/close.svg?url'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const isDesktop = ref(true)
 const showMobile = ref(false)
 const store = useAuthStore()
@@ -24,19 +25,17 @@ watch(isDesktop, (newValue, oldValue) => {
 })
 onMounted(async () => {
   await store.hydrateFromLocalStorage()
-  const data = await store.getToken(store.userToken)
-  await setToken(data.token)
+  // const data = await store.getToken(store.userToken)
+  // await setToken(data.token)
   isDesktop.value = window.innerWidth >= 1024
 
   window.addEventListener('resize', () => {
     isDesktop.value = window.innerWidth >= 1024
   })
 })
-// watchEffect(() => {
-//   console.log(store.userAuth)
-// })
 const signOutUser = () => {
   store.signOut()
+  router.replace('/')
 }
 
 onUnmounted(() => {
@@ -73,7 +72,7 @@ const uploadAvatar = () => {
       <RouterLink v-if="!store.userToken" to="/register">Register</RouterLink>
     </nav>
     <div v-if="store.userToken && isDesktop" class="user-div">
-      <p>{{ store.userAuth.email }}</p>
+      <p>{{ store?.userAuth?.email }}</p>
       <div class="thumb" @click="uploadAvatar">
         <img :src="store.userAvatar || store.userAuth.avatar" alt="avatar" />
       </div>
