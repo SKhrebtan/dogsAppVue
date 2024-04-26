@@ -7,7 +7,7 @@ export default {
         primary: '#F3743D'
       },
       screens: {
-        mobileAvatar: '540px'
+        mobileAvatar: '666px'
       }
     }
   },
